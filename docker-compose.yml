@@ -1,10 +1,42 @@
 version: '3'
 services:
   wordpress:
-# define the wordpress container
+     image: wordpress
+     restart: always    
+     environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+     
+     
+     networks:
+      - network1  
+     depends_on:
+      - db        
+
   db:
-# define the myswl container
+     image: mysql:latest
+     environment:
+
+      MYSQL_ROOT_PASSWORD: examplepass
+     networks:
+      - network1
   loadbalancer-nginx:
+     image: nginx
+     volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+     ports:
+      - 80:80
+     networks:
+      - network1
+     depends_on:
+      - wordpress    
 # define the nginx-container
 networks:
 # define the networks
+    network1:
+     driver: bridge
+
+    network2:
+     driver: bridge
+
